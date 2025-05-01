@@ -1,0 +1,393 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "id": "2d79733b-1a32-4ee6-a986-eecd3683e0d2",
+      "name": "Telegram Trigger2",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        1140
+      ],
+      "webhookId": "your-webhook-id",
+      "credentials": {
+        "telegramApi": {
+          "id": "ebaeuSpRscBBMuBc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.llm_input }}{{ $json.text }}",
+        "options": {
+          "systemMessage": "I want it in the following form:\nDate start:2025-04-17 00:00:00\nDate end:2025-04-17 00:00:00\nMeeting name:Ai meeting\ndetails:Planning for future Ai developments\nparticipat:sabrybmohamed@gmail.com\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        260,
+        1060
+      ],
+      "id": "f385a429-61e7-4689-a3ad-7e2ddbc2e316",
+      "name": "Generate Agenda1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        260,
+        1240
+      ],
+      "id": "2c0c3ee5-0577-47db-8743-101eb99059be",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "s49oBwf15uxQA7J4",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        1220
+      ],
+      "id": "32b58bec-b857-4703-842e-f1a25caba30e",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "jsCode": "const prompt = $('Code3').first().json.llm_input;\nconst text = $('Extract from File').first().json.text;\nreturn [{ json: { llm_input: `${prompt} , text extracted from pdf:${text}` } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        60,
+        1060
+      ],
+      "id": "2a904135-5423-4f81-8226-ffcf4c16265d",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "=primary",
+          "mode": ""
+        },
+        "start": "={{ $json.dateStart }}",
+        "end": "={{ $json.dateEnd }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $json.participants[0] }}",
+            "={{ $json.participants[1] }}"
+          ],
+          "description": "={{ $json.details }}",
+          "summary": "={{ $json.meetingName }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1,
+      "position": [
+        820,
+        1060
+      ],
+      "id": "803e58d2-fc10-47ee-9a91-73afdca3fddf",
+      "name": "Schedule Meeting1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "TUrf76JL9pAFh45g",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const messageText = $json.message?.text || $json.message?.caption || '';\n\nlet fileKey = '';\nlet fileInfo = {};\n\nif ($binary && Object.keys($binary).length > 0) {\n  fileKey = Object.keys($binary)[0];\n  fileInfo = $binary[fileKey];\n} else {\n  fileKey = null;\n  fileInfo = null;\n}\n\nreturn [{\n  json: {\n    llm_input: `Prompt: ${messageText}`,\n    fileAttached: !!fileKey\n  },\n  binary: fileKey ? { [fileKey]: fileInfo } : undefined\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -360,
+        1140
+      ],
+      "id": "001c20ff-10d5-41d3-8e8e-96d735cd35ce",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the output string from the previous node\nconst output = $input.first().json.output;\n\n// Split the string into lines\nconst lines = output.split('\\n').filter(line => line.trim() !== '');\n\n// Initialize variables\nlet dateStart, dateEnd, meetingName, details, participants;\n\n// Parse each line\nlines.forEach(line => {\n  if (line.startsWith('Date start: ')) {\n    dateStart = line.replace('Date start: ', '').trim();\n  } else if (line.startsWith('Date end: ')) {\n    dateEnd = line.replace('Date end: ', '').trim();\n  } else if (line.startsWith('Meeting name: ')) {\n    meetingName = line.replace('Meeting name: ', '').trim();\n  } else if (line.startsWith('Details: ')) {\n    details = line.replace('Details: ', '').trim();\n  } else if (line.startsWith('Participants: ')) {\n    participants = line.replace('Participants: ', '').trim().split(', ').map(email => email.trim());\n  }\n});\n\n// Return the extracted variables\nreturn [{\n  json: {\n    dateStart,\n    dateEnd,\n    meetingName,\n    details,\n    participants\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        620,
+        1060
+      ],
+      "id": "09ff13d1-ec76-4227-9023-9d59dca2abc8",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.transcript }}",
+        "options": {
+          "systemMessage": "Summarize the following meeting transcript in 100 words or less."
+        }
+      },
+      "id": "5dfbe7a4-d194-4f8d-baa8-eb005418b5e0",
+      "name": "Summarize Transcript1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        1300,
+        1060
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "88d5e3df-bf2a-4be5-aeaa-8e2858939d6b",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        1260
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "s49oBwf15uxQA7J4",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Schedule Meeting1').item.json.creator.email }},{{ $('Schedule Meeting1').item.json.attendees[1].email }} , {{ $('Schedule Meeting1').item.json.attendees[0].email }}",
+        "subject": "={{ $('Schedule Meeting1').item.json.summary }}",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1780,
+        1060
+      ],
+      "id": "26d316f3-e4a6-4df8-9143-1621d8b818fb",
+      "name": "Gmail1",
+      "webhookId": "6768f9b0-372f-476e-9229-bfeba84ea004",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "T5k8k2OxriprQIb0",
+          "name": "sabry"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Simulate a meeting transcript\nconst meetingName = $input.first().json.summary;\nconst details = $input.first().json.details;\nconst participants1 = $input.first().json.attendees[0].email;\nconst participants2 = $input.first().json.attendees[1].email;\n\nconst transcript = `Meeting: ${meetingName}\\nDetails: ${details}\\nParticipants: ${participants1},${participants2}\\n\\n[00:00] Organizer: Welcome to the ${meetingName}. Let's discuss ${details}.\\n[00:05] Participant 1: I think we should prioritize AI scalability.\\n[00:10] Participant 2: Agreed, but we need to address data privacy concerns first.\\n[00:15] Organizer: Good points. Let's plan for both.`;\nreturn [{ json: { transcript } }];"
+      },
+      "id": "486d8d7b-f7af-44f3-b58e-22d5d15846a4",
+      "name": "Simulate Transcript",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        1060
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Schedule Meeting1').item.json.creator.email }}",
+        "subject": "={{ $('Schedule Meeting1').item.json.summary }}",
+        "message": "={{ $('Simulate Transcript').item.json.transcript }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1800,
+        1220
+      ],
+      "id": "b1fb877f-0592-4c27-85dc-82131c78baa2",
+      "name": "Gmail2",
+      "webhookId": "6768f9b0-372f-476e-9229-bfeba84ea004",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "T5k8k2OxriprQIb0",
+          "name": "sabry"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Agenda1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Agenda1": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Generate Agenda1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "Schedule Meeting1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Transcript1": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gmail2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarize Transcript1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Meeting1": {
+      "main": [
+        [
+          {
+            "node": "Simulate Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simulate Transcript": {
+      "main": [
+        [
+          {
+            "node": "Summarize Transcript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cdae06e8-7503-4266-ba51-285088ae6e63",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "81190242828d4f96c849c33001554e9dd3aba1b61e4b8c7e5282e11f5c81e482"
+  },
+  "id": "QHwone7ZnB00kg0a",
+  "tags": []
+}
