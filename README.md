@@ -11,7 +11,6 @@ An intelligent meeting planner that integrates Telegram with your calendar syste
 
 This workflow automates the meeting scheduling process by allowing users to send messages or documents through Telegram. The system intelligently extracts relevant information, schedules the meeting, and communicates the details to all participants.
 
-![Workflow Visualization](https://via.placeholder.com/800x400?text=Telegram+to+Calendar+Workflow+Visualization)
 
 ---
 
