@@ -1,48 +1,89 @@
-# 📱➡️📅 Telegram to Calendar AI Workflow
+# 📅 Telegram to Calendar AI Workflow
 
-[![N8N](https://img.shields.io/badge/Powered%20by-n8n-orange)](https://n8n.io/)
-[![Groq](https://img.shields.io/badge/AI-Groq-blue)](https://groq.com/)
-[![Google Calendar](https://img.shields.io/badge/Calendar-Google-green)](https://calendar.google.com/)
-[![Gmail](https://img.shields.io/badge/Email-Gmail-red)](https://gmail.com/)
+A Telegram-integrated meeting planner using [n8n](https://n8n.io/), [Groq](https://groq.com/), Google Calendar, and Gmail. Users can send a message or a PDF via Telegram, and the system will:
 
-An intelligent meeting planner that integrates Telegram with your calendar system using automation workflows. This solution leverages the power of AI to transform messages and documents into structured calendar events with minimal human effort.
-
-## 🔍 Overview
-
-This workflow automates the meeting scheduling process by allowing users to send messages or documents through Telegram. The system intelligently extracts relevant information, schedules the meeting, and communicates the details to all participants.
-
+- Parse meeting details  
+- Extract and summarize content from PDFs  
+- Create Google Calendar events  
+- Generate a simulated transcript  
+- Send summaries via Gmail  
 
 ---
 
-## 🧠 Key Features
+## 🧠 Features
 
-- **Multi-Source Input Handling**
-  - 💬 Process natural language meeting requests via Telegram messages
-  - 📄 Extract and analyze content from uploaded PDF documents
-  - 📊 Handle various information formats and structures
-
-- **AI-Powered Processing**
-  - 🤖 Use Groq's LLM to interpret unstructured meeting requests
-  - 📋 Automatically extract key details (time, participants, purpose)
-  - 🔄 Convert vague requests into structured meeting parameters
-
-- **Comprehensive Meeting Management**
-  - 📆 Create detailed Google Calendar events with proper metadata
-  - 👥 Intelligently identify and add all participants
-  - 📝 Generate detailed meeting agendas and discussion points
-
-- **Advanced Communication**
-  - ✉️ Send professional email notifications with all meeting details
-  - 📑 Include AI-generated meeting summaries and action items
-  - 📊 Provide simulated transcripts to give context to the meeting
-
-- **Flexible System Integration**
-  - 🔄 Seamlessly connect multiple services (Telegram, Google, Groq)
-  - 🌐 Deploy locally or on cloud infrastructure
-  - 🔌 Extensible architecture to add new integrations
+- 🔗 Telegram Trigger to initiate the workflow  
+- 📄 Extract text from uploaded PDF files  
+- 🧠 Use Groq AI to understand meeting prompts or documents  
+- 📆 Automatically schedule meetings on Google Calendar  
+- ✉️ Send AI-generated meeting summaries via Gmail  
+- 📝 Generate simulated transcripts and concise summaries  
 
 ---
 
+## 🚀 How It Works
+
+1. User sends a message or PDF file to the Telegram bot.
+2. System checks if a file is attached:
+   - 📎 **If PDF is attached** → Extracts text from the file.
+   - ✉️ **If not** → Uses the message text.
+3. Content is formatted and sent to the AI agent to generate structured meeting information.
+4. Extracted data includes:
+   - Start Date  
+   - End Date  
+   - Meeting Name  
+   - Meeting Details  
+   - Participants  
+5. A Google Calendar event is created with the parsed data.
+6. A simulated transcript is generated and summarized using Groq AI.
+7. Gmail sends the summary to all participants.
+
+---
+
+## 🛠 Requirements
+
+- [n8n](https://n8n.io/) installed locally or on a server (e.g. Docker)
+- API Credentials for:
+  - Telegram Bot
+  - Groq API
+  - Google Calendar OAuth
+  - Gmail OAuth
+- Telegram Webhook URL properly configured
+
+---
+
+## 🧩 Nodes Used
+
+| Node Name               | Type              | Purpose                                    |
+|------------------------ |------------------ |--------------------------------------------|
+| Telegram Trigger        | `telegramTrigger` | Receive messages from Telegram             |
+| Code3                   | `code`            | Preprocess input and binary data           |
+| Extract from File       | `extractFromFile` | Read text from uploaded PDF                |
+| Code                    | `code`            | Merge Telegram message and file content    |
+| Groq Chat Model1        | `lmChatGroq`      | Understand and parse meeting content       |
+| Generate Agenda1        | `agent`           | Generate a structured meeting agenda       |
+| Code4                   | `code`            | Parse AI output to extract relevant fields |
+| Schedule Meeting1       | `googleCalendar`  | Add event to Google Calendar               |
+| Code (Transcript)       | `code`            | Simulate a meeting transcript              |
+| Groq Chat Model         | `lmChatGroq`      | Summarize the transcript                   |
+| Summarize Transcript1   | `agent`           | Shorten transcript using AI                |
+| Gmail1                  | `gmail`           | Send meeting summary to attendees          |
+
+---
+
+## 🔧 Setup Instructions
+
+1. Import the workflow JSON into your **n8n** instance.
+2. Set up the following **credentials** inside n8n:
+   - Telegram Bot
+   - Groq API
+   - Google Calendar
+   - Gmail
+3. Configure your Telegram Bot with the proper **Webhook URL**.
+4. Enable the workflow in n8n.
+5. Send a message or a PDF to your Telegram bot to trigger the workflow.
+
+---
 ## 🚀 How It Works
 
 ```mermaid
@@ -59,158 +100,3 @@ graph TD
     I --> J[AI summarizes transcript]
     J --> K[Send email to participants]
 ```
-
-### Detailed Workflow
-
-1. **Input Reception**
-   - User sends a message/PDF to the Telegram bot
-   - System identifies the content type and format
-
-2. **Content Extraction**
-   - For PDF files: Extracts and processes text content
-   - For messages: Analyzes natural language to identify meeting intent
-
-3. **AI Processing**
-   - Groq AI interprets the content to extract:
-     - Date and time parameters (with intelligent defaults)
-     - Meeting title and purpose
-     - Required participants
-     - Location information (physical or virtual)
-     - Meeting duration
-
-4. **Calendar Integration**
-   - Creates properly formatted Google Calendar event
-   - Sets appropriate meeting parameters
-   - Adds all identified participants
-
-5. **Transcript Generation**
-   - Uses AI to simulate a potential meeting transcript
-   - Generates realistic dialogue based on meeting purpose
-
-6. **Summarization**
-   - AI creates a concise meeting summary
-   - Highlights key discussion points and action items
-
-7. **Communication**
-   - Composes detailed email with all meeting information
-   - Sends notifications to all participants via Gmail
-   - Includes calendar link and summary information
-
----
-
-## 🛠️ Requirements
-
-### Required Services
-
-- **n8n**: Workflow automation platform (v0.214.0+)
-- **Telegram Bot**: For user interaction
-- **Groq API**: For AI processing capabilities
-- **Google Workspace**: For Calendar and Gmail integration
-
-### API Credentials
-
-| Service | Credential Type | Required Scopes |
-|---------|----------------|----------------|
-| Telegram | Bot API Token | Messages, Files |
-| Groq | API Key | Chat Completions |
-| Google | OAuth 2.0 | Calendar (read/write), Gmail (send) |
-
-### System Requirements
-
-- **Memory**: 2GB+ RAM
-- **Storage**: 1GB+ free space
-- **Processor**: Any modern CPU
-- **Network**: Stable internet connection
-- **OS**: Any OS supporting Docker or Node.js
-
----
-
-## 🧩 Workflow Components
-
-### Node Configuration
-
-| Node | Configuration | Notes |
-|------|--------------|-------|
-| **Telegram Trigger** | Webhook mode with poll updates | Configure to receive messages and documents |
-| **Extract from File** | Binary data handling | Set to extract text from PDFs |
-| **Groq Chat Model** | Temperature: 0.7, Model: Mixtral | Configure system prompt for meeting extraction |
-| **Google Calendar** | Write mode | Set timezone handling to user preference |
-| **Gmail** | HTML formatting enabled | Configure sender display name |
----
-
-## 📋 Setup Instructions
-
-### Initial Setup
-
-1. **Install n8n**
-   ```bash
-   # Using Docker
-   docker run -it --rm \
-     --name n8n \
-     -p 5678:5678 \
-     -v ~/.n8n:/home/node/.n8n \
-     n8nio/n8n
-   ```
-
-2. **Create API Credentials**
-   - Set up a [Telegram Bot](https://core.telegram.org/bots#how-do-i-create-a-bot) via BotFather
-   - Obtain a [Groq API key](https://console.groq.com/)
-   - Configure [Google OAuth 2.0](https://developers.google.com/identity/protocols/oauth2)
-
-3. **Import Workflow**
-   - Access your n8n instance at `http://localhost:5678`
-   - Navigate to Workflows → Import From File
-   - Upload the workflow JSON file
-
-### Configuration
-
-1. **Configure Telegram Webhook**
-   ```bash
-   curl -F "url=https://your-n8n-instance.com/webhook/telegram" \
-        -F "certificate=@cert.pem" \
-        https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook
-   ```
-
-2. **Set up Credentials in n8n**
-   - Navigate to Settings → Credentials
-   - Add credentials for each required service
-   - Test connections to ensure functionality
-
-3. **Customize System Prompts**
-   - Modify the Groq AI system prompt to match your organization's needs
-   - Adjust email templates and calendar event formats
-
-4. **Activate Workflow**
-   - Toggle the "Active" switch in the n8n workflow editor
-   - Send a test message to verify the workflow is functioning
-
----
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-| Problem | Solution |
-|---------|----------|
-| Telegram webhook not receiving messages | Check URL configuration and firewall settings |
-| PDF extraction failing | Verify PDF is not password protected or corrupt |
-| Calendar events not being created | Confirm Google OAuth scopes include calendar write permissions |
-| Emails not being sent | Check Gmail quota and authentication status |
-
-### Debug Tips
-
-- Enable n8n execution logs for detailed troubleshooting
-- Test each node individually using n8n's "Run" function
-- Verify API key validity for all external services
-
----
-
-## 🚀 Use Cases
-
-- **Executive Assistant**: Schedule meetings based on email threads or documents
-- **Project Management**: Convert meeting notes into scheduled follow-ups
-- **Customer Support**: Schedule client meetings from support conversations
-- **HR Onboarding**: Set up orientation meetings from candidate documents
-- **Education**: Schedule student consultations based on submitted assignments
-
----
