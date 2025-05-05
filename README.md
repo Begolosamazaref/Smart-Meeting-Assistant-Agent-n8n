@@ -136,27 +136,6 @@ graph TD
 | **Groq Chat Model** | Temperature: 0.7, Model: Mixtral | Configure system prompt for meeting extraction |
 | **Google Calendar** | Write mode | Set timezone handling to user preference |
 | **Gmail** | HTML formatting enabled | Configure sender display name |
-
-### Key Code Transformations
-
-```javascript
-// Example code for parsing AI output into calendar fields
-function parseAIOutput(output) {
-  const result = {
-    startDate: null,
-    endDate: null,
-    title: "",
-    description: "",
-    participants: []
-  };
-  
-  // Parsing logic
-  // ...
-  
-  return result;
-}
-```
-
 ---
 
 ## 📋 Setup Instructions
