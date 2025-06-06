@@ -1,4 +1,4 @@
-# 📅 Telegram to Calendar AI Workflow
+#  Telegram to Calendar AI Workflow
 
 A Telegram-integrated meeting planner using [n8n](https://n8n.io/), [Groq](https://groq.com/), Google Calendar, and Gmail. Users can send a message or a PDF via Telegram, and the system will:
 
@@ -10,23 +10,23 @@ A Telegram-integrated meeting planner using [n8n](https://n8n.io/), [Groq](https
 
 ---
 
-## 🧠 Features
+##  Features
 
-- 🔗 Telegram Trigger to initiate the workflow  
-- 📄 Extract text from uploaded PDF files  
-- 🧠 Use Groq AI to understand meeting prompts or documents  
-- 📆 Automatically schedule meetings on Google Calendar  
-- ✉️ Send AI-generated meeting summaries via Gmail  
-- 📝 Generate simulated transcripts and concise summaries  
+-  Telegram Trigger to initiate the workflow  
+-  Extract text from uploaded PDF files  
+-  Use Groq AI to understand meeting prompts or documents  
+-  Automatically schedule meetings on Google Calendar  
+-  Send AI-generated meeting summaries via Gmail  
+-  Generate simulated transcripts and concise summaries  
 
 ---
 
-## 🚀 How It Works
+##  How It Works
 
 1. User sends a message or PDF file to the Telegram bot.
 2. System checks if a file is attached:
-   - 📎 **If PDF is attached** → Extracts text from the file.
-   - ✉️ **If not** → Uses the message text.
+   -  **If PDF is attached** → Extracts text from the file.
+   -  **If not** → Uses the message text.
 3. Content is formatted and sent to the AI agent to generate structured meeting information.
 4. Extracted data includes:
    - Start Date  
@@ -52,7 +52,7 @@ A Telegram-integrated meeting planner using [n8n](https://n8n.io/), [Groq](https
 
 ---
 
-## 🧩 Nodes Used
+##  Nodes Used
 
 | Node Name               | Type              | Purpose                                    |
 |------------------------ |------------------ |--------------------------------------------|
@@ -84,7 +84,7 @@ A Telegram-integrated meeting planner using [n8n](https://n8n.io/), [Groq](https
 5. Send a message or a PDF to your Telegram bot to trigger the workflow.
 
 ---
-## 🚀 How It Works
+##  How It Works
 
 ```mermaid
 graph TD
