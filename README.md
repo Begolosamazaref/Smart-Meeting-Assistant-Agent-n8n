@@ -40,7 +40,7 @@ A Telegram-integrated meeting planner using [n8n](https://n8n.io/), [Groq](https
 
 ---
 
-## 🛠 Requirements
+##  Requirements
 
 - [n8n](https://n8n.io/) installed locally or on a server (e.g. Docker)
 - API Credentials for:
@@ -71,7 +71,7 @@ A Telegram-integrated meeting planner using [n8n](https://n8n.io/), [Groq](https
 
 ---
 
-## 🔧 Setup Instructions
+##  Setup Instructions
 
 1. Import the workflow JSON into your **n8n** instance.
 2. Set up the following **credentials** inside n8n:
